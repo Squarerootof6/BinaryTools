@@ -1,0 +1,813 @@
+Intensity    Wavelength (Å)    Spectrum  Reference
+   10   s      5000.21         Am I      FT57                
+   30          5000.988        Ti I      F91                 
+  110          5001.14         Lu I      MCS75               
+   30          5001.48         N  II     M75a                
+   40   P      5005.15         N  II     M75a                
+   50          5005.1587       Ne I      SS04                
+    3          5005.416        Pb I      WA68                
+  250          5005.60         K  II     D26                 
+  500   P      5007.206        Ti I      F91                 
+   20          5007.234        Er I      M64b                
+   30          5007.32         N  II     M75a                
+  600   P      5009.098        Ce I      M75c                
+   15          5009.334        Ar II     N73                 
+   20          5009.77         Tm II     MCS75               
+   20          5010.62         N  II     M75a                
+   15          5013.17         Eu I      MCS75               
+   30          5013.281        Ti I      F91                 
+  400   P      5014.186        Ti I      F91                 
+  300          5014.275        Ti I      F91                 
+  150          5015.04         Gd I      MCS75               
+  100          5015.678        He I      M60a                
+   70          5016.160        Ti I      F91                 
+   25          5017.163        Ar II     N73                 
+   60          5017.2540       Th II     PE83                
+  300          5018.59         Pr I      MCS75               
+  500   P      5019.76         Pr I      MCS75               
+  300          5019.971        Ca II     ER56                
+  110          5020.024        Ti I      F91                 
+  200   l      5020.96         Am II     FT57                
+   70          5022.40         Kr II     DHM33               
+  110          5022.866        Ti I      F91                 
+   15          5022.91         Eu I      MCS75               
+   70          5024.843        Ti I      F91                 
+   40          5025.569        Ti I      F91                 
+  500   P      5026.96         Pr I      MCS75               
+   50          5027.3433       Ag II     KLLT02              
+   50          5027.3841       U  I      PKE80               
+   20          5028.280        Xe I      HM33                
+   10          5029.54         Eu I      MCS75               
+  250          5033.38         Pr I      MCS75               
+   20          5034.22         Tm II     MCS75               
+  150          5035.902        Ti I      F91                 
+  110          5036.463        Ti I      F91                 
+   50          5037.7512       Ne I      SS04                
+   15          5037.915        Li II     HM59                
+   90          5038.396        Ti I      F91                 
+  150          5039.955        Ti I      F91                 
+  300          5040.846        Ce I      M75c                
+  130   P      5041.026        Si II     S61b                
+   20          5042.049        Er II     M64b                
+  250   P      5042.58         Pb II     WRSH74              
+  250          5043.80         Cs II     S81                 
+  300          5043.83         Pr I      MCS75               
+    9          5044.04         Pt I      MCS75               
+  250          5044.279        Sm I      K35                 
+  300   P,s    5044.66         Np I      FTBC76              
+   70          5044.92         Xe II     H39                 
+   30          5045.10         N  II     M75a                
+  800   P      5045.52         Pr I      MCS75               
+   70          5046.583        Zr I      J98                 
+   10          5047.74         He I      M60a                
+   60          5049.7960       Th II     PE83                
+  300          5050.57         La I      MCS75               
+  600          5051.793        Cu II     R69                 
+ 1000   s      5052.08         Es        WLGC74              
+   90          5053.28         W  I      MCS75               
+  400          5053.40         Pr I      MCS75               
+  130   P      5055.981        Si II     S61b                
+  250          5056.27         K  II     D26                 
+  250          5056.46         La I      MCS75               
+   40          5057.340        Ru I      K59                 
+ 1000   P,r    5058.31         Pm I      RD67                
+   20          5059.48         Pt I      MCS75               
+   15          5060.895        Tm I      SMC73               
+   25          5062.037        Ar II     N73                 
+   11          5064.306        Sc I      AV77                
+  200   P      5064.651        Ti I      F91                 
+  100          5064.904        Zr I      J98                 
+  200   P      5067.9737       Th I      PE83                
+    4          5069.144        Yb I      MT78                
+   25          5070.257        Sc I      AV77                
+   50          5070.58         Pb II     WRSH74              
+  300          5071.200        Sm I      K35                 
+  300          5071.775        Ce I      M75c                
+   12          5074.34         Yb I      MT78                
+   50          5074.53         Pb II     WRSH74              
+   11          5075.820        Sc I      AV77                
+  130          5078.252        Zr I      J98                 
+  140   P      5078.264        Cl II     RK74                
+  800   P      5078.54         Tl II     ES36                
+   50          5078.96         Nb I      MCS75               
+  300          5080.62         Xe II     H39                 
+   90          5081.561        Sc I      AV77                
+   50          5083.721        Sc I      AV77                
+  400          5084.23         K  I      R56                 
+   50          5085.549        Sc I      AV77                
+  500   P,h    5085.822        Cd I      BA56                
+   80          5086.52         Kr II     DHM33               
+  500   P      5087.12         Pr I      MCS75               
+   15          5087.123        Sc I      AV77                
+  700   P      5087.418        Y  II     NJK91               
+   12          5089.930        Sc I      AV77                
+    7          5090.495        Ar II     N73                 
+  400   r      5094.83         Pm I      RD67                
+   25          5095.30         Nb I      MCS75               
+  300          5096.28         Tc I      BMC67               
+   15          5096.721        Sc I      AV77                
+  400          5097.17         K  I      R56                 
+  400          5099.20         K  I      R56                 
+   25          5099.274        Sc I      AV77                
+  300   r      5100.77         Pm I      RD67                
+   15          5101.119        Sc I      AV77                
+  100   s      5102.93         Es        WLGC74              
+  200   P      5103.45         Gd I      MCS75               
+  150   P      5105.54         Cu I      S48                 
+  300          5106.23         La I      MCS75               
+   70          5110.384        Pr II     G90                 
+  110          5110.763        Pr II     G90                 
+   50          5111.64         Pb II     WRSH74              
+  500          5112.25         K  I      R56                 
+  400          5112.703        Ce I      M75c                
+   25          5113.439        Ti I      F91                 
+   15          5114.37         Eu I      MCS75               
+   14          5116.648        Sc I      AV77                
+  300          5117.162        Sm I      K35                 
+ 1000   l      5118.24         Bk I      WC78                
+  130   P      5119.29         I  I      KC59                
+   30          5120.415        Ti I      F91                 
+   15   c      5120.80         In II     PC38                
+   11   w      5121.75         In II     PC38                
+  200          5122.136        Sm I      K35                 
+  100          5122.42         Xe II     H39                 
+  500   P,h    5124.356        Bi II     DLW02               
+   30          5125.70         Xe II     H39                 
+  130   h      5125.73         Kr II     DHM33               
+ 1000   P,r    5127.34         Pm I      RD67                
+   12   c      5128.442        Hg II     SR01                
+   15          5129.10         Eu I      MCS75               
+   80          5129.536        Pr II     G90                 
+  500          5129.569        Ce I      M75c                
+  130          5130.60         Nd II     MCS75               
+  700   P      5133.44         Pr I      MCS75               
+   20          5133.52         Eu I      MCS75               
+  400   P      5135.09         Lu I      MCS75               
+   20          5135.199        Y  I      P77                 
+ 1000   s      5135.53         Bk II     WC78                
+   50          5136.558        Ru I      K59                 
+  250          5139.81         Pr I      MCS75               
+   30          5141.783        Ar II     N73                 
+  600   P,h    5144.492        Bi II     DLW02               
+   50          5144.9384       Ne I      SS04                
+  300          5145.16         C  II     MG93                
+   25          5145.308        Ar II     N73                 
+  600   P      5145.42         La I      MCS75               
+   30          5145.459        Ti I      F91                 
+  700   P,r    5146.30         Pm I      RD67                
+   30          5147.477        Ti I      F91                 
+    1          5148.838        Na I      R56                 
+  250          5149.993        Ce I      BWCC91              
+  200          5151.09         C  II     MG93                
+  110   P      5152.08         Rb II     R75                 
+  800   P      5152.14         Tl II     ES36                
+   25          5152.184        Ti I      F91                 
+  200   P      5153.24         Cu I      S48                 
+    1          5153.402        Na I      R56                 
+  400          5153.86         Pm II     RCWM80              
+   50          5155.140        Ru I      K59                 
+  200   P      5155.84         Gd I      MCS75               
+  130   P      5156.56         Ta I      MCS75               
+  140          5158.6041       Th I      PE83                
+  400          5158.69         La I      MCS75               
+  800   P      5159.686        Ce I      M75c                
+   25          5160.07         Eu I      MCS75               
+   15          5160.33         Nb I      MCS75               
+  120          5160.7309       Th I      PE83                
+  150   P,c    5161.20         I  II     MC60                
+  800   P      5161.484        Ce I      M75c                
+ 1000   P,s    5161.74         Es I      WLGC74              
+  150          5161.81         Tc I      BMC67               
+   15          5164.38         Nb I      MCS75               
+   15          5164.767        Er II     M64b                
+    8          5165.773        Ar II     N73                 
+   20          5166.70         Eu I      MCS75               
+   12   P      5167.322        Mg I      KM91a               
+  250          5167.4883       Fe I      NJLT94              
+  300          5169.71         Pm II     RCWM80              
+ 1000          5170.61         Bk I      WC78                
+   80          5171.026        Ru I      K59                 
+  500          5171.58         Pm II     RCWM80              
+   50          5171.5962       Fe I      NJLT94              
+   40   P      5172.684        Mg I      KM91a               
+  140          5173.740        Ti I      F91                 
+  120          5173.905        Pr II     G90                 
+ 1000          5173.96         Cf I      RCWM80              
+  500          5174.554        Ce I      M75c                
+  150          5174.81         Tc I      BMC67               
+  300          5175.419        Sm I      K35                 
+   13   c      5175.42         In II     PC38                
+  800   P      5177.31         La I      MCS75               
+   30          5178.82         Xe II     H39                 
+ 1000          5179.08         Cf I      RCWM80              
+  100          5181.86         Hf I      MCS75               
+  500          5182.36         Br II     K40                 
+   90          5183.42         La II     MCS75               
+   70   P      5183.604        Mg I      KM91a               
+  110          5187.459        Ce II     C73                 
+    1          5187.746        Ar I      N73                 
+  100          5188.04         Xe II     H39                 
+  500          5188.848        Ca I      R68                 
+   15          5188.898        Er II     M64b                
+  130          5191.37         Xe II     H39                 
+   90          5191.45         Nd II     MCS75               
+   30          5192.10         Xe II     H39                 
+  120          5192.62         Nd II     MCS75               
+   25   h      5192.86         Si II     S61b                
+  150          5192.969        Ti I      F91                 
+  300          5194.05         Pm II     RCWM80              
+  300          5194.43         Pr I      MCS75               
+ 1000          5197.55         Bk I      WC78                
+   90          5197.77         Gd I      MCS75               
+  150          5199.1637       Th I      PE83                
+   20          5199.85         Eu I      MCS75               
+  300          5200.409        Y  II     NJK91               
+   10          5200.96         Eu I      MCS75               
+    1          5201.437        Pb I      WA68                
+   70   h      5202.41         Si II     S61b                
+    9          5202.63         Os I      MCS75               
+ 1000   P,l    5204.40         Es I      WLGC74              
+  250   P      5204.505        Cr I      K53                 
+   15          5204.768        Hg II     SR01                
+  500   P      5205.722        Y  II     NJK91               
+  400   P      5206.021        Cr I      K53                 
+   11          5206.44         Eu I      MCS75               
+   70          5206.561        Pr II     G90                 
+  500          5208.09         Pm II     RCWM80              
+  150          5208.32         Kr II     DHM33               
+  600   P      5208.415        Cr I      K53                 
+   90   P      5209.078        Ag I      PZ01                
+  800   P,h    5209.325        Bi II     DLW02               
+   70   c      5209.58         Cs II     S81                 
+  200   P      5210.384        Ti I      F91                 
+   15          5210.547        Sc I      AV77                
+    5          5211.604        Yb I      MT78                
+ 1000   P      5211.86         La I      MCS75               
+  500          5211.877        Ce I      BWCC91              
+ 1000   P      5212.53         Bk I      WC78                
+  300          5213.23         Nd I      MCS75               
+   70   P      5215.10         Eu I      MCS75               
+   40   l      5215.99         Am II     FT57                
+    7          5216.814        Ar II     N73                 
+  300   P      5217.94         Cl II     RK74                
+  250   P      5218.20         Cu I      S48                 
+   70          5219.048        Pr II     G90                 
+ 1000          5219.24         Cf I      RCWM80              
+   12          5219.634        Sc I      AV77                
+  500          5219.65         Ga II     IL85                
+  110          5220.108        Pr II     G90                 
+  130   P      5221.355        Cl II     RK74                
+   20          5222.20         Sr I      MCS75               
+  700   P      5223.461        Ce I      M75c                
+   25          5223.49         Eu I      MCS75               
+   30          5224.304        Ti I      F91                 
+   90          5224.66         W  I      MCS75               
+   25          5224.933        Ti I      F91                 
+   30          5225.11         Sr I      MCS75               
+  800   P      5227.04         Cs II     S81                 
+  100          5227.1509       Fe I      NJLT94              
+ 1000   P      5227.533        Se II     G62                 
+   25          5227.66         Pt I      MCS75               
+  300          5227.97         Pr I      MCS75               
+   40          5228.12         Tb I      MCS75               
+   30          5229.27         Sr I      MCS75               
+  500          5229.745        Ce I      M75c                
+   25          5230.259        Au I      ED71                
+  200   P      5231.1597       Th I      PE83                
+  700   P      5234.27         La I      MCS75               
+  500          5236.26         Pm II     RCWM80              
+  300          5236.66         Pm II     RCWM80              
+   15          5238.206        Mo I      WB88                
+  500          5238.26         Br II     K40                 
+   40          5238.55         Sr I      MCS75               
+   11          5239.24         Eu I      MCS75               
+   20          5240.800        Y  I      P77                 
+    6          5244.11         Yb I      MT78                
+  150   c      5245.71         I  II     MC60                
+  700   P      5245.916        Ce I      M75c                
+  400          5246.33         Pm II     RCWM80              
+   14          5247.58         Cr I      K53                 
+  300          5249.38         Cs II     S81                 
+  130          5249.59         Nd II     MCS75               
+   70          5251.18         Gd I      MCS75               
+  500          5253.46         La I      MCS75               
+   70   P      5256.90         Sr I      MCS75               
+  300   P      5258.24         Ac I      MFT57               
+   12          5258.364        Sc I      AV77                
+  130          5259.737        Pr II     G90                 
+  150          5260.44         Xe II     H39                 
+  150          5261.95         Xe II     H39                 
+   25          5264.16         Cr I      K53                 
+  500          5265.557        Ca I      R68                 
+    9          5265.73         Cr I      K53                 
+   20          5266.40         Eu I      MCS75               
+  120          5269.5376       Fe I      NJLT94              
+  500          5270.270        Ca I      R68                 
+   60          5270.28         Be II     J61a                
+   80          5270.3564       Fe I      NJLT94              
+  400   h      5270.512        Bi II     DLW02               
+  500          5270.64         Pm II     RCWM80              
+  100   P      5270.81         Be II     J61a                
+   25          5270.95         Re I      MCS75               
+  500          5271.19         La I      MCS75               
+  250          5271.403        Sm I      K35                 
+   15          5271.53         Nb I      MCS75               
+ 1000   P      5271.95         Bk I      WC78                
+   40          5271.96         Eu I      MCS75               
+   10          5272.48         Eu I      MCS75               
+  110          5273.43         Nd II     MCS75               
+  110          5274.05         Cs II     S81                 
+  100          5274.230        Ce II     C73                 
+   80          5275.51         Tc I      BMC67               
+   30   c,w    5275.56         Re I      MCS75               
+    8   h      5277.04         Yb I      MT78                
+ 1000   b,s    5279.01         Cf I      RCWM80              
+   14          5282.82         Eu I      MCS75               
+   70          5285.07         Tc I      BMC67               
+   11          5291.26         Eu I      MCS75               
+  200          5291.67         Nd I      MCS75               
+   70   c      5292.024        Pr II     G90                 
+  700   P      5292.22         Xe II     H39                 
+  150          5292.52         Cu I      S48                 
+   70          5292.620        Pr II     G90                 
+  130          5293.17         Nd II     MCS75               
+   11          5294.64         Eu I      MCS75               
+   80          5296.13         P  II     M59                 
+  400          5296.563        Ce I      M75c                
+   15          5296.69         Cr I      K53                 
+   30          5298.29         Cr I      K53                 
+   25          5301.02         Pt I      MCS75               
+  800          5305.347        Se II     G62                 
+   60   P      5307.116        Tm I      SMC73               
+   70          5308.66         Kr II     DHM33               
+  100          5309.27         Xe II     H39                 
+  300          5313.87         Xe II     H39                 
+   15          5318.60         Nb I      MCS75               
+   90          5319.82         Nd II     MCS75               
+ 1000   s      5320.09         Cf I      RCWM80              
+   50          5320.20         Tc I      BMC67               
+   80          5322.772        Pr II     G90                 
+  500          5323.28         K  I      R56                 
+   80          5328.0386       Fe I      NJLT94              
+  400          5328.082        Ce I      M75c                
+   15          5328.36         Cr I      K53                 
+   30          5328.5317       Fe I      NJLT94              
+   60          5330.7775       Ne I      SS04                
+  500          5332.07         Br II     K40                 
+   30   P      5332.339        Sn II     B64                 
+  150          5333.41         Kr II     DHM33               
+    9          5335.15         Yb II     M67                 
+ 1000          5337.48         Cd II     SP49                
+  500   P      5338.22         I  II     MC60                
+ 1000   s      5339.13         Cf I      RCWM80              
+  700          5339.33         Xe II     H39                 
+  500          5339.69         K  I      R56                 
+   50          5341.0239       Fe I      NJLT94              
+  100          5341.0938       Ne I      SS04                
+  500          5342.97         K  I      R56                 
+   60          5343.2834       Ne I      SS04                
+  100          5343.5812       Th I      PE83                
+   30          5344.17         Nb I      MCS75               
+  250   P,c    5345.15         I  II     MC60                
+   40          5345.77         Cr I      K53                 
+   20          5348.30         Cr I      K53                 
+  100   c      5349.13         Cs II     S81                 
+   15          5349.342        Sc I      AV77                
+  500          5349.472        Ca I      R68                 
+  900   P      5350.46         Tl I      MCS75               
+   20          5350.74         Nb I      MCS75               
+    8          5352.95         Yb II     M67                 
+   14          5354.40         Rh I      MCS75               
+   50   P      5354.88         Tb I      MCS75               
+   25          5356.097        Sc I      AV77                
+   50   P      5357.61         Eu I      MCS75               
+  600          5359.57         K  I      R56                 
+   20          5360.513        Mo I      WB88                
+   11          5361.61         Eu I      MCS75               
+   70          5363.20         Xe II     H39                 
+   50          5367.64         Pb II     WRSH74              
+   70          5368.07         Xe II     H39                 
+    8          5368.99         Pt I      MCS75               
+  200          5370.99         Cs II     S81                 
+   40          5371.4897       Fe I      NJLT94              
+   50          5372.099        Pb II     WRSH74              
+  150          5372.39         Xe II     H39                 
+   12          5375.373        Sc I      AV77                
+   10          5376.94         Eu I      MCS75               
+ 1000          5378.13         Cd II     SP49                
+  150          5380.34         C  I      J66                 
+ 1000   P      5380.98         Np II     FTBC76              
+  200          5381.89         Cd II     SP49                
+  500   d      5384.85         Tl II     ES36                
+    8          5390.79         Pt I      MCS75               
+ 1000          5392.03         Bk I      WC78                
+   15          5392.058        Sc I      AV77                
+   80   P      5392.119        Cl II     RK74                
+   10          5392.80         Xe I      HM33                
+   11          5392.94         Eu I      MCS75               
+ 1000          5394.24         Bk I      WC78                
+   30          5397.1279       Fe I      NJLT94              
+  400          5397.638        Ce I      M75c                
+  200          5400.23         Ra I      R34b                
+  200   P      5400.5618       Ne I      SS04                
+   70          5402.57         Lu I      MCS75               
+  100   s      5402.62         Am I      FT57                
+   40          5402.77         Eu I      MCS75               
+  200          5406.81         Ra I      R34b                
+ 1000   P      5408.88         Cf I      RCWM80              
+   70          5409.78         Cr I      K53                 
+    5   c      5411.52         He II     GM65                
+   50          5414.55         Na II     W71                 
+  500          5416.36         Ga II     IL85                
+ 1000   P      5419.15         Xe II     H39                 
+  300          5420.380        Ce I      BWCC91              
+  600   P      5423.23         Cl II     RK74                
+   60          5423.507        Cl II     RK74                
+  100   s      5424.70         Am I      FT57                
+   80   P      5425.253        Hg II     SR01                
+   80          5425.91         P  II     M59                 
+  140   P      5428.667        S  II     KM93                
+    1          5431.532        Rb I      B59                 
+  250   P      5432.815        S  II     KM93                
+  150          5435.83         I  II     MC60                
+   12   w      5436.70         In II     PC38                
+   20          5438.226        Y  I      P77                 
+  250          5438.96         Xe II     H39                 
+  110   P      5443.37         Cl II     RK74                
+   60          5444.205        Cl II     RK74                
+  100          5445.45         Xe II     H39                 
+   12          5446.195        Sc I      AV77                
+  400          5449.239        Ce I      BWCC91              
+ 1000          5449.63         Bk I      WC78                
+   70          5450.45         Xe II     H39                 
+   80          5450.74         P  II     M59                 
+   25          5450.84         Sr I      MCS75               
+   30          5451.51         Eu I      MCS75               
+   25          5452.94         Eu I      MCS75               
+  400   P      5453.828        S  II     KM93                
+  700   P      5455.15         La I      MCS75               
+   30          5457.022        Cl II     RK74                
+  130          5460.39         Xe II     H39                 
+  500   P      5460.735        Hg I      BAL50               
+  100   P,c    5464.62         I  II     MC60                
+   90   P      5465.497        Ag I      PZ01                
+    1   c      5465.94         Cs I      K62b                
+   70   h      5466.432        Si II     S61b                
+   70          5466.466        Y  I      P77                 
+   70   h      5466.868        Si II     S61b                
+ 1000   l      5467.47         Bk I      WC78                
+   70          5468.17         Kr II     DHM33               
+    9          5471.555        Ag I      PZ01                
+  300          5472.61         Xe II     H39                 
+  150   P      5473.620        S  II     KM93                
+    9          5475.77         Pt I      MCS75               
+  120   P      5476.69         Lu II     MCS75               
+    9          5478.50         Pt I      MCS75               
+  110   P      5480.84         Sr I      MCS75               
+   30          5482.012        Sc I      AV77                
+  300   P      5483.56         Li II     HM59                
+  500   P      5484.50         Li II     HM59                
+ 1000   s      5484.58         Bk I      WC78                
+   25          5484.628        Sc I      AV77                
+  400   P      5485.11         Li II     HM59                
+   11          5488.65         Eu I      MCS75               
+   30   l      5494.86         Xe II     H39                 
+    1          5495.874        Ar I      N73                 
+   25   h      5496.45         Si II     S61b                
+  700   P      5501.34         La I      MCS75               
+    1          5502.88         Cs I      K62b                
+   30          5503.464        Y  I      P77                 
+   50          5504.17         Sr I      MCS75               
+  250   P      5506.494        Mo I      WB88                
+  500          5506.72         Br II     K40                 
+  150   P      5509.718        S  II     KM93                
+   11          5510.52         Eu I      MCS75               
+   70          5512.049        Ce II     C73                 
+ 1000          5512.22         Bk II     WC78                
+   40          5512.523        Ti I      F91                 
+   20   c      5513.00         In II     PC38                
+   25          5514.230        Sc I      AV77                
+   30          5514.343        Ti I      F91                 
+   40          5514.531        Ti I      F91                 
+   30          5520.519        Sc I      AV77                
+   40          5521.83         Sr I      MCS75               
+   60          5522.78         Rb II     R75                 
+   14   w      5523.28         In II     PC38                
+    9          5523.53         Os I      MCS75               
+   70          5525.53         Xe II     H39                 
+   25          5526.785        Sc II     JL80                
+   70          5527.561        Y  I      P77                 
+  200          5531.07         Xe II     H39                 
+  120          5531.16         Pr I      MCS75               
+  200   P      5533.031        Mo I      WB88                
+   30          5534.81         Sr I      MCS75               
+ 1000   P      5535.481        Ba I      KL99                
+ 1000   l      5537.93         Bk I      WC78                
+    5   h      5539.053        Yb I      MT78                
+   30          5540.05         Sr I      MCS75               
+   50   c      5544.25         Pb II     WRSH74              
+  800   P      5546.08         Pm II     RCWM80              
+   20          5547.44         Eu I      MCS75               
+  100          5550.60         Hf I      MCS75               
+  100          5552.12         Hf I      MCS75               
+  200          5555.85         Ra I      R34b                
+  300          5556.252        Ce I      BWCC91              
+  130   P      5556.466        Yb I      MT78                
+ 1000   l      5556.80         Bk I      WC78                
+ 1000   s      5557.09         Bk I      WC78                
+    1          5558.702        Ar I      N73                 
+   30   P      5561.910        Sn II     B64                 
+  120   c      5562.06         Pr I      MCS75               
+   80          5562.2253       Kr I      K93                 
+   50          5562.7662       Ne I      SS04                
+  400          5563.02         Cs II     S81                 
+  500          5564.966        Ce I      M75c                
+  400          5565.965        Ce I      M75c                
+   10          5566.62         Xe I      HM33                
+  400   P      5568.12         Sb II     C66b                
+  200          5569.26         Ac I      MFT57               
+  300   P      5570.2894       Kr I      K93                 
+   14          5570.33         Eu I      MCS75               
+   90   P      5570.444        Mo I      WB88                
+  800   P      5576.02         Pm II     RCWM80              
+  800          5576.35         Te II     HM64                
+   20   h      5576.66         Si II     S61b                
+   13   c      5576.90         In II     PC38                
+   20          5577.14         Eu I      MCS75               
+   20          5577.416        Y  I      P77                 
+   11          5580.03         Eu I      MCS75               
+   13          5580.3873       Kr I      K93                 
+ 1000          5581.21         Bk I      WC78                
+   60          5581.874        Y  I      P77                 
+  500          5581.971        Ca I      R68                 
+  200   l      5584.21         Am II     FT57                
+  100          5587.0263       Th I      PE83                
+  500   P      5588.757        Ca I      R68                 
+   30   P      5588.815        Sn II     B64                 
+  300   c      5589.02         Tc I      BMC67               
+  500          5590.120        Ca I      R68                 
+  400          5593.302        Al II     KM91b               
+  500          5594.468        Ca I      R68                 
+  250          5595.875        Ce I      BWCC91              
+  100   s      5598.13         Am I      FT57                
+  500          5598.487        Ca I      R68                 
+   15          5599.42         Rh I      MCS75               
+  600   P      5601.280        Ce I      M75c                
+  150   P      5606.151        S  II     KM93                
+    1          5606.733        Ar I      N73                 
+  100   P,c    5608.85         Pb II     WRSH74              
+  300   P,l    5615.51         Es I      WLGC74              
+  100          5616.67         Xe II     H39                 
+  200   c      5620.45         Tc I      BMC67               
+  400          5620.54         Nd I      MCS75               
+  500   P      5625.69         I  II     MC60                
+   30          5627.631        V  I      DA78                
+   60          5630.138        Y  I      P77                 
+   25          5631.406        Tm I      SMC73               
+   60          5631.676        Sn I      B64                 
+   11          5632.463        Mo I      WB88                
+    2          5635.21         Cs I      K62b                
+   60   c      5635.99         Rb II     R75                 
+   25          5636.233        Ru I      K59                 
+   11   w      5636.70         In II     PC38                
+   25   h      5639.48         Si II     S61b                
+  200          5639.77         Sb II     C66b                
+  150   P      5639.972        S  II     KM93                
+  150          5642.13         Tc I      BMC67               
+   30          5644.132        Ti I      F91                 
+   80          5644.94         Tc I      BMC67               
+   20          5645.80         Eu I      MCS75               
+  300          5648.25         La I      MCS75               
+  800   P      5649.26         Te II     HM64                
+   15          5649.5618       Kr I      K93                 
+    1          5650.704        Ar I      N73                 
+  500          5655.140        Ce I      M75c                
+ 1000   l      5656.54         Bk I      WC78                
+   50          5656.6588       Ne I      SS04                
+ 1000   P      5659.03         Bk I      WC78                
+  100          5659.38         Xe II     H39                 
+  120          5659.985        S  II     KM93                
+   20   h      5660.66         Si II     S61b                
+  500   P      5660.81         Ra I      R34b                
+   90   h      5661.57         Pr I      MCS75               
+   25          5662.147        Ti I      F91                 
+    3   c      5664.02         Cs I      K62b                
+  500          5666.20         Te II     HM64                
+   30          5666.63         N  II     M75a                
+    9          5667.34         Ag I      S40                 
+  200          5667.56         Xe II     H39                 
+  150   c      5668.46         Pr I      MCS75               
+  130   P,h    5669.562        Si II     S61b                
+  600   P      5669.959        Ce I      M75c                
+   25          5670.847        V  I      DA78                
+   50          5670.91         Xe II     H39                 
+   70          5671.828        Sc I      AV77                
+   50   P      5675.835        Tm I      SMC73               
+  250   d      5675.97         Nd I      MCS75               
+   30          5676.02         N  II     M75a                
+  200   P      5677.105        Hg II     SR01                
+  300          5677.752        Ce I      BWCC91              
+   40   P      5679.56         N  II     M75a                
+  130          5681.89         Kr II     DHM33               
+    4          5682.633        Na I      R56                 
+   60          5684.484        Si I      RA65                
+   20          5686.21         N  II     M75a                
+   50          5686.856        Sc I      AV77                
+    1          5688.193        Na I      R56                 
+    7          5688.205        Na I      R56                 
+   40   h      5688.81         Si II     S61b                
+   15          5689.146        Mo I      WB88                
+   70   h      5690.35         Kr II     DHM33               
+  100   c      5690.91         I  II     MC60                
+  300          5692.943        Ce I      BWCC91              
+   10          5695.75         Xe I      HM33                
+   80          5696.22         Gd I      MCS75               
+  800   P      5696.993        Ce I      M75c                
+  100          5698.529        V  I      DA78                
+   30   d      5699.15         Rb II     R75                 
+ 1000   P      5699.226        Ce I      M75c                
+   70          5699.61         Xe II     H39                 
+   50          5700.186        Sc I      AV77                
+  150          5700.24         Cu I      S48                 
+   25   h      5701.37         Si II     S61b                
+ 1000          5702.24         Bk I      WC78                
+   80          5703.586        V  I      DA78                
+   15          5706.714        Y  I      P77                 
+   50          5706.997        V  I      DA78                
+  150          5707.61         Pr I      MCS75               
+ 1000   P      5708.12         Te II     HM64                
+   80          5708.397        Si I      RA65                
+    3          5709.91         In I      P38                 
+  200   c      5710.53         I  II     MC60                
+   20          5710.77         N  II     M75a                
+    5          5711.088        Mg I      KM91a               
+   40          5711.793        Sc I      AV77                
+  500          5712.382        Pu I      BFG84               
+   70          5716.10         Xe II     H39                 
+   10          5717.314        Sc I      AV77                
+  600   P      5719.031        Ce I      M75c                
+  400   h      5719.138        Bi II     DLW02               
+   50          5719.2248       Ne I      SS04                
+   12          5719.99         Yb I      MT78                
+    6          5721.93         Os I      MCS75               
+    1          5724.121        Rb I      B59                 
+   70          5725.31         Tc I      BMC67               
+ 1000          5726.05         Cf I      RCWM80              
+  150          5726.91         Xe II     H39                 
+   70          5727.046        V  I      DA78                
+    3          5727.68         In I      P38                 
+  200          5729.29         Nd I      MCS75               
+   20          5731.248        V  I      DA78                
+   70   l      5732.05         Ac II     MFT57               
+   70          5736.55         Lu I      MCS75               
+   20          5737.065        V  I      DA78                
+  250          5740.66         La I      MCS75               
+   50          5748.2985       Ne I      SS04                
+  150          5751.03         Xe II     H39                 
+   20          5751.409        Mo I      WB88                
+  150          5752.50         N  I      M75a                
+  800          5755.85         Te II     HM64                
+  100          5758.65         Xe II     H39                 
+  130          5758.97         Ac II     MFT57               
+  120   P      5760.5508       Th I      PE83                
+   20          5762.801        Er I      M64b                
+    4          5763.57         Pt I      MCS75               
+   20          5764.287        Tm I      SMC73               
+   70          5764.4188       Ne I      SS04                
+   30          5765.20         Eu I      MCS75               
+  500          5769.34         La I      MCS75               
+   50          5769.598        Hg I      BAL50               
+  400          5773.122        Ce I      BWCC91              
+  100          5776.39         Xe II     H39                 
+   80          5777.619        Ba I      KL99                
+  250          5779.28         Pr I      MCS75               
+    6          5780.82         Os I      MCS75               
+  150          5782.13         Cu I      S48                 
+  600          5782.38         K  I      R56                 
+   15          5783.69         Eu I      MCS75               
+  300          5788.143        Ce I      BWCC91              
+  400          5789.24         La I      MCS75               
+   60          5790.663        Hg I      BAL50               
+    9   H      5791.00         Cr I      K53                 
+  600   P      5791.34         La I      MCS75               
+   20          5791.839        Mo I      WB88                
+   30   P      5798.860        Sn II     B64                 
+   25   h      5800.47         Si II     S61b                
+  700          5801.75         K  I      R56                 
+   50          5804.4496       Ne I      SS04                
+   30          5806.74         Si II     S61b                
+  600          5812.15         K  I      R56                 
+  300          5812.919        Ce I      M75c                
+  100          5813.63         Ra II     R34a                
+   50          5814.16         Cs II     S81                 
+   30          5815.96         Xe II     H39                 
+   50          5820.1558       Ne I      SS04                
+   30          5823.89         Xe I      HM33                
+  500          5823.93         Pm II     RCWM80              
+   15          5824.80         Xe I      HM33                
+   30   P      5826.786        Er I      M64b                
+   50   P,c,w  5830.98         Eu I      MCS75               
+  250          5831.14         Cs II     S81                 
+  700          5831.89         K  I      R56                 
+   15          5832.8566       Kr I      K93                 
+   10          5834.31         Re I      MCS75               
+  110          5835.13         Pr I      MCS75               
+   25          5837.374        Au I      ED71                
+    1   c      5838.83         Cs I      K62b                
+   13          5840.12         Pt I      MCS75               
+    5          5844.84         Pt I      MCS75               
+    5          5845.14         Cs I      K62b                
+ 1000          5846.07         Cm I      WHGC76              
+  200   P      5852.4879       Ne I      SS04                
+   12   c      5853.15         In II     PC38                
+   40          5853.675        Ba II     KL99                
+  600          5857.452        Ca I      R68                 
+   20          5858.267        Mo I      WB88                
+  250          5862.491        Ce I      BWCC91              
+   50          5866.448        Ti I      F91                 
+   50   h      5868.40         Si II     S61b                
+  300   c      5868.79         Pm II     RCWM80              
+  500   P      5870.9160       Kr I      K93                 
+   12          5871.279        Hg II     SR01                
+   50          5872.8275       Ne I      SS04                
+   90          5874.72         Pr I      MCS75               
+   10          5875.02         Xe I      HM33                
+  500   P      5875.6148       He I      M02                 
+  250   P      5875.6404       He I      M02                 
+  120   P      5875.9663       He I      M02                 
+   90          5877.36         Ta I      MCS75               
+  300   P,l    5878.04         Np I      FTBC76              
+   90          5878.10         Pr I      MCS75               
+   90          5879.04         Pr I      MCS75               
+  100          5881.8952       Ne I      SS04                
+   90   c      5884.72         Pr I      MCS75               
+   30          5888.310        Mo I      WB88                
+    1          5888.584        Ar I      N73                 
+   20   c      5888.939        Hg II     SR01                
+  300          5889.77         C  II     MG93                
+ 1000   P      5889.950        Na I      R56                 
+  100          5893.29         Xe II     H39                 
+ 1000   P      5893.389        Ge II     S63a                
+  100          5894.3607       Zn II     GL00                
+   10          5894.99         Xe I      HM33                
+    6          5895.624        Pb I      WA68                
+  500   P      5895.924        Na I      R56                 
+   30          5899.291        Ti I      F91                 
+    5          5902.4623       Ne I      SS04                
+   25   w      5903.4          In II     PC38                
+   70          5905.13         Xe II     H39                 
+    5          5906.4294       Ne I      SS04                
+ 1000   P      5910.71         Bk I      WC78                
+  300   P      5910.85         Ac II     MFT57               
+    1          5912.085        Ar I      N73                 
+   25          5915.22         Si II     S61b                
+   70   P      5915.385        U  I      PKE80               
+   14   w      5915.4          In II     PC38                
+  110          5920.76         Pr I      MCS75               
+  100   c      5924.47         Tc I      BMC67               
+  500          5925.63         Cs II     S81                 
+  150          5926.301        Ce I      BWCC91              
+  200          5928.342        Ce I      BWCC91              
+  400          5930.62         La I      MCS75               
+   30          5931.78         N  II     M75a                
+   60   c      5931.93         Tc I      BMC67               
+   10          5934.17         Xe I      HM33                
+  250          5937.720        Ce I      BWCC91              
+  600   P      5940.857        Ce I      M75c                
+   30   P      5941.65         N  II     M75a                
+   90          5944.02         Ta I      MCS75               
+   50          5944.8342       Ne I      SS04                
+  150          5945.53         Xe II     H39                 
+  400   c      5946.49         Pm II     RCWM80              
+   50   P      5948.545        Si I      RA65                
+  800   P      5949.48         Tl II     ES36                
+  250          5950.25         I  II     MC60                
+ 1000   P      5952.41         Cm I      WHGC76              
+   40          5953.156        Ti I      F91                 
+  150          5956.42         Pm I      RCWM80              
+   25   h      5956.965        Au I      ED71                
+   80          5957.561        Si II     S61b                
+   50          5965.4710       Ne I      SS04                
+   25          5965.824        Ti I      F91                 
+    6          5966.07         Eu II     MCS75               
+   40   c,w    5967.10         Eu I      MCS75               
+  100          5971.13         Xe II     H39                 
+   14          5971.264        Tm I      SMC73               
+   15          5972.75         Eu I      MCS75               
+   50          5974.6273       Ne I      SS04                
+  500          5974.68         Te II     HM64                
+   60          5975.5340       Ne I      SS04                
+  700   P      5976.46         Xe II     H39                 
+   30          5978.538        Ti I      F91                 
+   80          5978.929        Si II     S61b                
+   25   P,c    5982.85         Ho I      MZH78               
+   14          5983.60         Rh I      MCS75               
+  110          5986.14         Pr I      MCS75               
+  120*  c      5987.14         Pr I      MCS75               
+  120*  c      5987.29         Pr II     MCS75               
+   15          5987.9074       Ne I      SS04                
+   70          5992.22         Kr II     DHM33               
+   20          5992.83         Eu I      MCS75               
+   10          5993.8502       Kr I      K93                 
+   80          5997.087        Ba I      KL99                
+   40          5999.008        Ti I      F91                 
