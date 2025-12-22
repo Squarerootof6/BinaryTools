@@ -38,8 +38,6 @@ os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 print(tf.config.list_logical_devices())
 
-
-
 halpha = np.float64(6562.81)
 hbeta = 4862.68
 hgamma = 4341.68
@@ -51,7 +49,18 @@ RSUN = 6.955*1e10  # cm
 G = 6.67*1e-11*1e3  # cm^3/(g s^2)
 MSUN = 1.9891*1e33  # g
 
+def logteff_logg_to_mass(type='DA'):
+    """Calculate stellar mass for given logTeff and logg using precomputed models from Sihao Cheng 2021.
 
+    Args:
+        type (str, optional): Spectral type of stellar model. 'DA' for DA, 'DB' for DB, MS for MS.
+
+    Returns:
+        _type_: function
+    """
+    with open(dir_path+'/models/logteff_logg_to_mass_'+type+'.pkl', 'rb') as file:
+        logteff_logg_to_mass = pickle.load(file)
+    return logteff_logg_to_mass
 def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()

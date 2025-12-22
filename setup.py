@@ -25,6 +25,7 @@ setup(
     ],
     python_requires='>=3.11',
     install_requires=[
-        "matplotlib>=3.0",  # 列出依赖项
+        "matplotlib>=3.0",
+        "numpy>=1.21",
     ],
 )

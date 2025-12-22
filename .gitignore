@@ -1,0 +1,8 @@
+build/
+__pycache__/
+*.pyc
+.env
+.DS_Store
+.vscode/
+binary_tools.egg-info/
+binary_tools/__pycache__/
