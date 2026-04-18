@@ -1,5 +1,4 @@
 
-from assistlgh.spectra import planck
 import re
 import tensorflow as tf
 from matplotlib import pyplot as plt
@@ -109,17 +108,13 @@ class NN:
         x_data = self.label_sc(x_data.reshape(len(x_data), self.n_input))
         #x_data = x_data.reshape(len(x_data), self.n_input)
         #y_data = y_data/np.mean(y_data)
-        # 将数据集分为， 训练集与测试
         X_train_full, X_test, y_train_full, y_test = train_test_split(
             x_data, y_data, test_size=0.1)
         #X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.2)
-        # 将总训练集分为，训练集与验证集
         X_train, X_valid, y_train, y_valid = train_test_split(
             X_train_full, y_train_full, test_size=0.25)
         del x_data, y_data
         gc.collect()
-
-        # 模型参数保存路径
         checkpoint_save_path = dir_path+"/checkpoint.ckpt"
         if os.path.exists(checkpoint_save_path + ".index"):
             self.model.load_weights(checkpoint_save_path)

@@ -27,9 +27,7 @@ from tensorflow.keras.optimizers import *
 from numpy.polynomial.polynomial import polyfit, polyval
 from numpy.polynomial.chebyshev import chebfit, chebval
 from scipy.interpolate import splev, splrep, interp1d
-import assistlgh as alg
-from assistlgh.spectra import calibrate, planck, gaussian, atom_line
-from assistlgh.calculate import grad5
+from .atom_lines import atom_line
 path = os.path.abspath(__file__)
 dir_path = os.path.dirname(path)
 sys.path.append(dir_path)
@@ -48,7 +46,53 @@ k_B = 1.38064852e-23
 RSUN = 6.955*1e10  # cm
 G = 6.67*1e-11*1e3  # cm^3/(g s^2)
 MSUN = 1.9891*1e33  # g
+def grad5(f,x,h=2e-7):
+    if type(x)==str:
+        return (-f(x+2*h)+8*f(x+h)-8*f(x-h)+f(x-2*h))/(12*h)
+    elif type(x)==list:
+        res = []
+        for i in range(len(x)):
+            y=np.array([x]*4).T
+            y[i] += np.array([2*h,h,-h,-2*h])
+            y=y.T
+            res.extend((-f(y[0])+8*f(y[1])-8*f(y[2])+f(y[3]))/(12*h))
+        return res
+def progress_bar(now,length,notes='',frequency=1):
+    '''
+    now:current progress
+    
+    length:whole mission
+    '''
+    if int(now/(length)*100) % frequency == 0 :
+        string = ' '*10+' '*len(notes)+'                \r'
+        print(string,end='')
+        print('{:*<10s} {:d}% {} {}\r'.format('>'*int(now/(length)*10),int(now/(length)*100),notes,time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())),end='')
+def calibrate(data, filters, magnitude):
+    """
+    calibrate one lamost spectra
+    data:fits data
+    filters: pyphot.filter. the filters of photometric magnitude(gri)
+    magnitude: list, gri magnitude
+    """
+    gri = np.array(magnitude)
+    wl = data[2]*Unit("AA")
+    flux = data[0]*Unit("flam")
+    ivar = data[1]
+    diff = []
 
+    for band in range(len(filters)):
+        # zero = 3.630*10**(-9) # erg s-1 cm-2 A-1
+        # 计算星等
+        f = filters[band].get_flux(wl, flux, axis=-1)
+        mag_spec = -2.5 * np.log10(f.value) - filters[band].AB_zero_mag
+        diff.append(gri[band]-mag_spec)
+    wl = wl.value
+    flux = flux.value
+    center_gri = [4686, 6166, 7480]
+    poly = np.polyfit(center_gri, diff, deg=2)
+
+    y = 10**(np.polyval(poly, wl)/(-2.5))
+    return np.vstack((wl, flux*y*1e17, ivar/(y*1e17)**2))
 def logteff_logg_to_mass(type='DA'):
     """Calculate stellar mass for given logTeff and logg using precomputed models from Sihao Cheng 2021.
 
@@ -500,7 +544,7 @@ class GFP:
             else:
                 res.extend([mass1])
         return res
-    def fit_spectrum(self, wl, fl, filters, gri, TG2M, ivar=None, parallax=0, prior_teff=None, mcmc=False, onlyprofile=False, polyorder=0,
+    def fit_spectrum(self, wl, fl, filters, gri, TG2M, ivar=None, parallax=0, mcmc=False, onlyprofile=False, polyorder=0,
                      norm_kw=dict(k=1, sfac=0.5, niter=0),
                      nwalkers=25, burn=25, ndraws=25, sampler_kw=dict(threads=1,moves=None), progress=True,
                      plot_init=False, make_plot=True, plot_corner=False, plot_corner_full=False, plot_trace=False,  savename=None, given_plot=None,crop=None, init_rv=None,
@@ -508,78 +552,89 @@ class GFP:
                      rv_kw=dict(plot=False, distance=100, nmodel=2, edge=15),
                      nteff=3,  rv_line='alpha', corr_3d=False, cali=True, addition_elements=None,fig_path = './',output_path='./',init_paras = None):
         """
-        Main fitting routine, takes a continuum-normalized spectrum and fits it with MCMC to recover steller labels.
+        Fit a continuum-normalized spectrum and recover stellar labels.
 
         Parameters
         ----------
         wl : array
-                Array of observed spectral wavelengths
+            Observed wavelength array.
         fl : array
-                Array of observed spectral fluxes, continuum-normalized. We recommend using the included `normalize_balmer` function from `wdtools.spectrum` to normalize DA spectra,
-                and the generic `continuum_normalize` function for DB spectra.
-        ivar : array
-                Array of observed inverse-variance for uncertainty estimation. If this is not available, use `ivar = None` to infer a constant inverse variance mask using a second-order
-                beta-sigma algorithm. In this case, since the errors are approximated, the chi-square likelihood may be inexact - treat returned uncertainties with caution.
-        prior_teff : tuple, optional
-                Tuple of (mean, sigma) to define a Gaussian prior on the effective temperature parameter. This is especially useful if there is strong prior knowledge of temperature
-                from photometry. If not provided, a flat prior is used.
+            Observed flux array, expected to be continuum-normalized.
+        filters : array-like
+            Photometric filter data used by the calibration step.
+        gri : array-like
+            g/r/i photometric information used by the calibration step.
+        TG2M : callable or list of callables
+            Mapping from temperature/logg parameters to stellar mass.
+        ivar : array, optional
+            Inverse-variance array for the spectrum.
+        parallax : float, optional
+            Parallax used when estimating radii and continuum scaling.
         mcmc : bool, optional
-                Whether to run MCMC, or simply return the errors estimated by LMFIT
+            If True, run MCMC sampling after the initial LMFIT solution.
         onlyprofile : bool, optional
-                Whether to fit only the spectral lines with normalized spectrum.
+            If True, fit only the line profiles and skip the continuum term.
         polyorder : int, optional
-                Order of additive Chebyshev polynomial during the fitting process. Can usually leave this to zero unless the normalization is really bad.
+            Order of the additive Chebyshev polynomial continuum term.
         norm_kw : dict, optional
-                Dictionary of keyword arguments that are passed to the spline normalization routine.
+            Keyword arguments passed to the spline normalization routine.
         nwalkers : int, optional
-                Number of independent MCMC 'walkers' that will explore the parameter space
+            Number of MCMC walkers.
         burn : int, optional
-                Number of steps to run and discard at the start of sampling to 'burn-in' the posterior parameter distribution. If intitializing from
-                a high-probability point, keep this value high to avoid under-estimating uncertainties.
+            Number of burn-in steps.
         ndraws : int, optional
-                Number of 'production' steps after the burn-in. The final number of posterior samples will be nwalkers * ndraws.
-        threads : int, optional
-                Number of threads for distributed sampling.
+            Number of production sampling steps.
+        sampler_kw : dict, optional
+            Keyword arguments passed to the emcee sampler.
         progress : bool, optional
-                Whether to show a progress bar during the MCMC sampling.
+            If True, show progress during optimization and sampling.
         plot_init : bool, optional
-                Whether to plot the continuum-normalization routine
-        make_plot: bool, optional
-                If True, produces a plot of the best-fit synthetic spectrum over the observed spectrum.
+            If True, plot the continuum-normalization step.
+        make_plot : bool, optional
+            If True, generate fit plots.
         plot_corner : bool, optional
-                Makes a corner plot of the fitted stellar labels
+            If True, generate a corner plot for the fitted stellar labels.
         plot_corner_full : bool, optional
-                Makes a corner plot of all sampled parameters, the stellar labels plus any Chebyshev coefficients if polyorder > 0
-        plot_trace: bool, optiomal
-                If True, plots the trace of posterior samples of each parameter for the production steps. Can be used to visually determine the quality of mixing of
-                the chains, and ascertain if a longer burn-in is required.
+            If True, generate a corner plot for all sampled parameters.
+        plot_trace : bool, optional
+            If True, plot the MCMC trace.
         savename : str, optional
-                If provided, the corner plot and best-fit plot will be saved as PDFs in the working folder.
-        DA : bool, optional
-                Whether the star is a DA white dwarf or not. As of now, this must be set to True.
+            Base name used when saving plots and text output.
+        given_plot : tuple, optional
+            Existing plot handles to reuse instead of creating new figures.
         crop : tuple, optional
-                The region to crop the supplied spectrum before proceeding with the fit. Can be used to exclude low-SN regions at the edge of the spectrum.
+            Wavelength range to crop before normalization.
+        init_rv : array-like, optional
+            Initial radial velocity values to use instead of fitting them.
         verbose : bool, optional
-                If True, the routine prints several progress statements to the terminal.
-        lines : array, optional
-                List of Balmer lines to utilize in the fit. Defaults to all from H-alpha to H8.
+            If True, print progress information.
         lmfit_kw : dict, optional
-                Dictionary of keyword arguments to the LMFIT solver
+            Keyword arguments passed to lmfit.minimize.
         rv_kw : dict, optional
-                Dictionary of keyword arguments to the RV fitting routine
+            Keyword arguments passed to the radial-velocity fitting routine.
         nteff : int, optional
-                Number of equidistant temperatures to try as initialization points for the minimization routine.
+            Number of grid points per dimension used for the initial search.
         rv_line : str, optional
-                Which Balmer line to use for the radial velocity fit. We recommend 'alpha'.
+            Balmer line used for radial-velocity estimation.
         corr_3d : bool, optional
-                If True, applies 3D corrections from Tremblay et al. (2013) to stellar parameters before returning them.
+            If True, apply 3D corrections before returning the final labels.
+        cali : bool, optional
+            If True, run the photometric calibration step before fitting.
+        addition_elements : list, optional
+            Extra spectral line identifiers to include in the profile plots.
+        fig_path : str, optional
+            Directory used when saving figures.
+        output_path : str, optional
+            Directory used when saving text and MCMC outputs.
+        init_paras : array-like, optional
+            Initial parameter guesses for the minimizer.
 
         Returns
         -------
-                array
-                        Returns the fitted stellar labels along with a reduced chi-square statistic with the format: [[labels], [e_labels], redchi]. If polyorder > 0,
-                        then the returned arrays include the Chebyshev coefficients. The radial velocity (and RV error) are always the last elements in the array, so if
-                        polyorder > 0, the label array will have temperature, surface gravity, the Chebyshev coefficients, and then RV.
+        array
+            Returns [[labels], [errors], redchi]. If mcmc is enabled, the returned
+            labels and errors are refined from the posterior samples. When
+            polyorder > 0, the Chebyshev coefficients are appended to the label array.
         """
         self.cont_fixed = False
         self.rv_fixed = False
@@ -876,7 +931,7 @@ class GFP:
                 params['teff1'].set(value=teff1 / self.tscale)
                 params['logg1'].set(value=logg1 / self.lscale)
                 if progress:
-                    alg.visualize.progress_bar(n,len(combinations),notes = str(datetime.datetime.now())+'-'+str(os.getpid()),frequency=10)
+                    progress_bar(n,len(combinations),notes = str(datetime.datetime.now())+'-'+str(os.getpid()),frequency=10)
                     sys.stdout.flush()
                 res_i = lmfit.minimize(residual, params,args=(wl,fl,fl0,ivar), **lmfit_kw)
                 chi = np.sum(res_i.residual**2)
@@ -969,7 +1024,7 @@ class GFP:
                 params['logg2'].set(value=logg2 / self.lscale)
                 if progress:
                     #print('initializing at teff1 = %i K,teff2 = %i K,logg1 = %i ,logg2 = %i \r' %(teff1, teff2, logg1, logg2), end='')
-                    alg.visualize.progress_bar(n,len(combinations),notes = str(datetime.datetime.now())+'-'+str(os.getpid()),frequency=10)
+                    progress_bar(n,len(combinations),notes = str(datetime.datetime.now())+'-'+str(os.getpid()),frequency=10)
                     sys.stdout.flush()
                 res_i = lmfit.minimize(
                     residual_bin, params,args=(wl,fl,fl0,ivar), **lmfit_kw)
@@ -1104,7 +1159,7 @@ class GFP:
             if len(massseries) == 0:
                 print('empty mass!')
             else:
-                print('mass:',len(massseries))
+                print('mass length:',len(massseries))
             self.flatchain = sampler.flatchain
             upstd = []
             downstd = []
@@ -1211,9 +1266,8 @@ class GFP:
 
         if make_plot:
             print('make plot')
-            if onlyprofile:
-                self.makeplot(wl,fl,fit_fl,ivar,'profile',savename,mle,[*addition_elements],parallax,given_plot=self.lineprofile_plot)
-            else:
+            self.makeplot(wl,fl,fit_fl,ivar,'profile',savename,mle,[*addition_elements],parallax,given_plot=self.lineprofile_plot)
+            if not onlyprofile:
                 norm_ax = self.norm_plot[1]
                 norm_ax[1].plot(wl, fit_fl, c='r',
                                 label='+'.join(self.specclass))
@@ -1222,47 +1276,6 @@ class GFP:
                                   wl.min(), wl.max(), color='k', lw=1, ls='--')
                 norm_ax[2].hlines(-3*np.mean(np.sqrt(1/ivar[np.where(ivar != 0)[0]])), wl.min(),wl.max(), color='k', lw=1, ls='--', label=r'$\pm 3\sigma$')
                 norm_ax[2].set_title('residual', y=0.9)
-                ax = self.lineprofile_plot[1]
-                if len(addition_elements)==1:
-                    ax = np.array([ax])
-                # fig, ax = plt.subplots(1, 3, figsize=(25, 9), gridspec_kw={'width_ratios': [1, 3, 1]})
-                breakpoints = []
-                # ax[1].plot(wl0, fl0, c='k')
-                # norm_ax[0].plot(wl_cont, fl_cont, c='r')
-                ax[0].set_xlabel(r'$\mathrm{\Delta \lambda}\ (\mathrm{\AA})$')
-                ax[0].set_ylabel('Normalized Flux')
-                for i in range(len(addition_elements)):
-                    element = np.flip(addition_elements)[i]
-
-                    lst = atom_line(wl0.min(), wl0.max()).special_lines[element]
-                    lst = lst[np.logical_and(lst > wl0.min(), lst < wl0.max())]
-                    addition_lines = np.vstack(
-                        (lst, np.ones(len(lst))*30)).T
-                    breakpoints = []
-                    ax[i].set_title(element)
-                    ax[i].set_xlim(-50, 50)
-                    for kk in range(len(self.edges)):
-
-                        if (kk + 1) % 2 == 0:
-                            continue
-                        breakpoints.append(bisect_left(wl, self.edges[kk]))
-                        breakpoints.append(bisect_left(wl, self.edges[kk+1]))
-                    for jj in range(len(breakpoints)):
-                        if (jj + 1) % 2 == 0:
-                            continue
-                        wl_seg = wl[breakpoints[jj]:breakpoints[jj+1]]
-                        fl_seg = fl[breakpoints[jj]:breakpoints[jj+1]]
-                        fit_fl_seg = fit_fl[breakpoints[jj]:breakpoints[jj+1]]
-                        peak = int(len(wl_seg)/2)
-                        delta_wl = wl_seg - wl_seg[peak]
-                        interval = fl_seg.mean()/2
-                        ax[i].text(delta_wl[0], 1 + fl_seg[0] -
-                                     interval * jj, '%.0f' % wl_seg[peak], horizontalalignment='right')
-                        ax[i].plot(delta_wl, 1 + fl_seg - interval * jj, 'k')
-                        ax[i].plot(delta_wl, 1 + fit_fl_seg -
-                                     interval * jj, 'r')
-                    ax[i].set_xlabel(r'$\mathrm{\Delta \lambda}\ (\mathrm{\AA})$')
-                    # ax[i+1].set_ylabel('Normalized Flux')
                 '''
                 norm_ax[0].plot(wl0, planck(
                     wl0, mle[0][0], RD1, self.rv[0]), label='comp1')
@@ -1280,6 +1293,7 @@ class GFP:
                             wl0, [mle[i]], specclass=self.specclass[i], radius=[radius[i]]), label=self.specclass[i])
                 norm_ax[0].plot(wl0, self.spectrum_sampler(
                     wl0, mle, specclass=self.specclass, radius=radius), label='+'.join(self.specclass))
+                print('Final parameters:', mle, self.specclass,radius)
                 left = 3600
                 bottom = norm_ax[2].get_yticks()[1]
                 step = (norm_ax[2].get_xticks()[1] -
@@ -1471,8 +1485,8 @@ class GFP:
             norm_ax[1].set_xlabel(
                 r'$\mathrm{\lambda}\ (\mathrm{\AA})$',**kwargs)
             norm_ax[0].set_ylabel(r'Flux $(erg/cm^{2}/s/\AA)$',**kwargs)
-            if showlines:
-                atom_line(wl.min(),wl.max()).showlines(wl,addition_elements,norm_ax[1])
+            #if showlines:
+                #atom_line(wl.min(),wl.max()).showlines(wl,addition_elements,norm_ax[1])
 
         return given_plot
 if __name__ == '__main__':

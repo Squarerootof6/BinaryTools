@@ -584,8 +584,9 @@ class SpecTools():
             nivar = nivar * spline**2
         '''
         if plot:
-            from assistlgh.spectra import atom_line
+            from .atom_lines import atom_line
             ax[0].plot(wl, fl_prev, color='k',)
+            ax[1].plot(wl, fl_norm, color='pink', alpha=1)
             if ax is None:
                 fig, ax = plt.subplots(figsize=(20,6))
                 ax.plot(wl, fl_norm, color='pink', alpha=1)
@@ -602,7 +603,7 @@ class SpecTools():
                 #ax[1].minorticks_on()
                 #ax[1].grid(ls='--')
                 #if showline is not None:
-                #    atom_line(wl.min(), wl.max()).showlines(wl, showline, ax[1])
+                    #atom_line(wl.min(), wl.max()).showlines(wl, showline, ax[1])
                 #ax[1].set_title('Normalized Spectrum', y=0.85)
         return fl_norm.copy(), nivar.copy()
     def vel2wl(self, vel,centroid):

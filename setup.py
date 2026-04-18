@@ -27,5 +27,6 @@ setup(
     install_requires=[
         "matplotlib>=3.0",
         "numpy>=1.21",
+        "tensorflow==2.14.0",
     ],
 )
