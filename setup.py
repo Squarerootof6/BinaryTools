@@ -16,7 +16,7 @@ setup(
     packages=find_packages(),  # 自动查找包
     include_package_data=True,  # 包含 MANIFEST.in 中指定的文件
     package_data={
-       'binary_tools':['./models/*','atomic_lines.csv','./*.txt'], # 指定要包含在包中的额外文件
+       'binary_tools':['./models/*','atomic_lines.csv','./*.txt','./models/neural_gen/*'], # 指定要包含在包中的额外文件
     },
     classifiers=[
         "Programming Language :: Python :: 3",

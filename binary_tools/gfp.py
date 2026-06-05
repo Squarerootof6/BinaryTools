@@ -165,6 +165,7 @@ class GFP:
         self.norm_plot = None
         self.lineprofile_plot = None
         self.sp = SpecTools()
+        self.onlyprofile = False
     def mark_specclass(self,specclass):
         classes = specclass.split('+')
         self.specclass = [*classes]
@@ -425,6 +426,8 @@ class GFP:
             specclass = self.specclass
         if parallax is None:
             parallax = self.parallax
+        if self.onlyprofile:
+            parallax = 1.0
         # print('specclass',specclass)
         if type(specclass) != list:
             specclass = [specclass]
@@ -441,7 +444,11 @@ class GFP:
             synth_tmp = self.synth_spectrum_sampler(self.lamgrid[specclass[i]], prms[i], specclass[i])
             synth_tmp = scipy.ndimage.gaussian_filter1d(synth_tmp, self.resolution[specclass[i]])
             func_tmp = interp1d(self.lamgrid[specclass[i]], synth_tmp, fill_value=0., bounds_error=False)
-            synth_tmp = func_tmp(wl)*(radius[i]*RSUN/parallax)**2
+            if self.onlyprofile:
+                scale = 1.0
+            else:
+                scale = (radius[i]*RSUN/parallax)**2
+            synth_tmp = func_tmp(wl) * scale
             if three:
                 synth_list.append(synth_tmp.copy())
             else:
@@ -569,7 +576,7 @@ class GFP:
         ivar : array, optional
             Inverse-variance array for the spectrum.
         parallax : float, optional
-            Parallax used when estimating radii and continuum scaling.
+            Parallax used when estimating radii and continuum scaling. Ignored when onlyprofile is True.
         mcmc : bool, optional
             If True, run MCMC sampling after the initial LMFIT solution.
         onlyprofile : bool, optional
@@ -638,7 +645,12 @@ class GFP:
         """
         self.cont_fixed = False
         self.rv_fixed = False
+        self.onlyprofile = onlyprofile
+        if self.onlyprofile and (parallax is None or parallax == 0):
+            parallax = 1.0
         self.parallax = parallax
+        if self.onlyprofile and (not addition_elements or len(addition_elements) == 0):
+            raise ValueError('onlyprofile=True requires addition_elements to define line regions')
         nans = np.logical_and(np.isnan(fl), np.isnan(wl), np.isnan(ivar))
 
         if np.sum(nans) > 0:
@@ -785,7 +797,10 @@ class GFP:
 
 
 
-        norm_kw['plot'] = plot_init
+        if onlyprofile:
+            norm_kw['plot'] = False
+        else:
+            norm_kw['plot'] = plot_init
 
         outwl = (self.exclude_wl_default < np.min(wl)) & (
             self.exclude_wl_default > np.max(wl))

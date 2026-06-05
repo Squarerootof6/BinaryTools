@@ -6,3 +6,4 @@ __pycache__/
 .vscode/
 binary_tools.egg-info/
 binary_tools/__pycache__/
+Examples*
