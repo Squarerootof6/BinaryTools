@@ -1,3 +1,10 @@
-*.pkl filter=lfs diff=lfs merge=lfs -text
-*.csv filter=lfs diff=lfs merge=lfs -text
-*.h5 filter=lfs diff=lfs merge=lfs -text
+# Git LFS is no longer used by this repository.
+#
+# The five model files that were tracked by LFS (atomic_lines.csv and the four
+# *_p01.h5 weight files) are now stored as normal git blobs: the largest is
+# 83 MB, below GitHub's 100 MB per-file limit, and the training sets that used
+# to exceed it are no longer distributed. Cloning therefore needs no Git LFS
+# client and consumes none of the LFS quota.
+#
+# Old commits still contain LFS pointers; checking one of those out requires
+# `git lfs` for the historical files. Current HEAD does not.
