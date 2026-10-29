@@ -100,6 +100,12 @@ Optical-band errors are 1–7 % for the coolest models; blue-end errors reach
 10²–10³ %. `GFP` emits a `RuntimeWarning` when you request such a spectrum —
 for cool objects blueward of 4000 Å use the raw Koester grids instead.
 
+The cause is the training-target normalisation, not the network, and a
+replacement target scheme is designed in
+[`docs/retrain-plan.md`](docs/retrain-plan.md) (Planck normalisation: the blue
+end dynamic range drops from 5.88 dex to 1.27 dex while Teff stays in the
+model).
+
 ## Notes for developers
 
 **What the package ships.** Only model-related files: the network weights
