@@ -423,7 +423,7 @@ class SpecTools():
             #         ticks = np.arange(centroid - gap*4, centroid + gap*4, gap)
             #         rvticks = ((ticks - centroid) / centroid)*3e5
             #         plt.xticks(ticks, np.round(rvticks).astype(int))
-            plt.xlabel('Wavelength ($\mathrm{\AA}$)')
+            plt.xlabel(r'Wavelength ($\mathrm{\AA}$)')
             plt.ylabel('Flux (Normalized)')
             plt.xlim(centroid - 35, centroid + 35)
             #plt.axvline(centroid, color = 'k', linestyle = '--')
@@ -434,7 +434,7 @@ class SpecTools():
                             direction='in', top=True, right=True)
             plt.tick_params(which='minor', length=5, width=1,
                             direction='in', top=True, right=True)
-            plt.xlabel('Wavelength ($\mathrm{\AA}$)')
+            plt.xlabel(r'Wavelength ($\mathrm{\AA}$)')
             plt.ylabel('Normalized Flux')
             plt.tight_layout()
             # print(np.isnan(np.array(errors)))
@@ -482,7 +482,7 @@ class SpecTools():
         # if plot:
         #     plt.plot(rv, cc, color = 'k', alpha = 0.1)
 
-        rv_guess = self.quad_max(rv, cc)  # 找到数据最小值作为线心
+        rv_guess = self.quad_max(rv, cc)  # take the minimum as the line centre
         rv, cc = self.xcorr_rv(wl, fl, temp_wl, temp_fl,
                                init_rv=rv_guess, rv_range=r2, npoint=p2)
         if plot:
@@ -869,7 +869,7 @@ class SpecTools():
     def get_one_rv_bin(self, wl, fl, temp_wl, temp_fl, r1=100, p1=50, r2=100, p2=50, init_rv=0, plot=False):
         rv, cc = self.xcorr_rv_bin(wl, fl, temp_wl, temp_fl,
                                    init_rv=init_rv, rv_range=r1, npoint=p1)
-        rv_guess = self.quad_max_bin(rv, cc)  # 找到数据最小值作为线心
+        rv_guess = self.quad_max_bin(rv, cc)  # take the minimum as the line centre
         rv, cc = self.xcorr_rv_bin(wl, fl, temp_wl, temp_fl,
                                    init_rv=rv_guess, rv_range=r2, npoint=p2)
         if plot:

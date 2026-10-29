@@ -4,6 +4,7 @@ import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 import datetime
+import tempfile
 import glob
 import pickle
 import sys
@@ -21,12 +22,14 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.models import *
 from tensorflow.keras.layers import *
 from tensorflow.keras.optimizers import *
-
-#tf.disable_v2_behavior()  # 启用TensorFlow 1.x兼容模式
+import time
+#tf.disable_v2_behavior()  # enable TensorFlow 1.x compatibility mode
 
 from numpy.polynomial.polynomial import polyfit, polyval
 from numpy.polynomial.chebyshev import chebfit, chebval
 from scipy.interpolate import splev, splrep, interp1d
+from scipy.interpolate import LinearNDInterpolator
+import h5py
 from .atom_lines import atom_line
 path = os.path.abspath(__file__)
 dir_path = os.path.dirname(path)
@@ -35,6 +38,21 @@ sys.path.append(dir_path)
 os.environ["CUDA_VISIBLE_DEVICES"]="-1"
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 print(tf.config.list_logical_devices())
+
+# --- supported runtime window --------------------------------------------
+_np_major = int(np.__version__.split('.')[0])
+if _np_major >= 2:
+    warnings.warn(
+        'binary_tools is validated with NumPy >=1.23,<2.0 (TensorFlow 2.14 needs it); '
+        'NumPy %s is installed, some routines may fail.' % np.__version__,
+        RuntimeWarning)
+_tf_ver = tuple(int(x) for x in tf.__version__.split('.')[:2])
+if _tf_ver >= (2, 16):
+    warnings.warn(
+        'binary_tools is validated with TensorFlow 2.14.x. TensorFlow %s ships Keras 3; '
+        'the bundled weight loader bypasses keras .h5 loading, so spectra should still '
+        'be correct, but please report any deviation.' % tf.__version__,
+        RuntimeWarning)
 
 halpha = np.float64(6562.81)
 hbeta = 4862.68
@@ -82,7 +100,7 @@ def calibrate(data, filters, magnitude):
 
     for band in range(len(filters)):
         # zero = 3.630*10**(-9) # erg s-1 cm-2 A-1
-        # 计算星等
+        # compute magnitudes
         f = filters[band].get_flux(wl, flux, axis=-1)
         mag_spec = -2.5 * np.log10(f.value) - filters[band].AB_zero_mag
         diff.append(gri[band]-mag_spec)
@@ -93,22 +111,186 @@ def calibrate(data, filters, magnitude):
 
     y = 10**(np.polyval(poly, wl)/(-2.5))
     return np.vstack((wl, flux*y*1e17, ivar/(y*1e17)**2))
+_MASS_CACHE = {}
+
+
+def _mass_cache_dir():
+    """Directory for the built-interpolator cache (user-writable)."""
+    base = os.environ.get('XDG_CACHE_HOME') or os.path.expanduser('~/.cache')
+    d = os.path.join(base, 'binary_tools')
+    try:
+        os.makedirs(d, exist_ok=True)
+    except OSError:
+        d = os.path.join(tempfile.gettempdir(), 'binary_tools-cache')
+        os.makedirs(d, exist_ok=True)
+    return d
+
+
+def _is_3d(npz_path):
+    return np.load(npz_path)['points'].shape[1] == 3
+
+
+class _MassLookup3D(object):
+    """Callable wrapper around the 3-D (MS) mass table.
+
+    Two calling conventions are used inside the package, so both are supported:
+
+        f(logteff, logg, feh=0.0)   -- parameter style (decide_mass, user code)
+        f(point)                    -- vectorised style, e.g. grad5() computes
+                                       f(y[k]) with y[k] a length-3 array
+
+    A module-level class (rather than a closure) keeps it picklable.
+    """
+
+    def __init__(self, interp):
+        self.interp = interp
+
+    def __call__(self, *args):
+        if len(args) == 1:
+            return self.interp(np.asarray(args[0], dtype=float))
+        if len(args) < 2:
+            raise TypeError(
+                "mass table expects f(logteff, logg, feh=0.0) or f(point)")
+        logteff, logg = args[0], args[1]
+        feh = args[2] if len(args) > 2 else 0.0
+        lt = np.atleast_1d(np.asarray(logteff, dtype=float))
+        lg = np.atleast_1d(np.asarray(logg, dtype=float))
+        fe = np.broadcast_to(np.asarray(feh, dtype=float), lt.shape)
+        out = self.interp(lt, lg, fe)
+        if np.ndim(logteff) == 0 and np.ndim(logg) == 0:
+            return np.ravel(out)[0]      # scalar in -> scalar out
+        return out
+
+
+def _load_mass_interp(npz_path, type):
+    """Load a mass interpolator from the .npz node table, caching the built
+    triangulation on disk.
+
+    Rebuilding the Delaunay triangulation of the MS grid (333k 3-D points) takes
+    ~16 s, which multiplies by the number of fitting workers. The built object is
+    therefore pickled into the user cache (~97 ms to reload) the first time.
+    """
+    d = np.load(npz_path)
+    pts, vals = d['points'], d['values'].ravel()
+
+    # escape hatch: BINARY_TOOLS_NO_MASS_CACHE=1 -> always rebuild, never write
+    if os.environ.get('BINARY_TOOLS_NO_MASS_CACHE'):
+        return LinearNDInterpolator(pts, vals, rescale=True)
+
+    cache = os.path.join(_mass_cache_dir(),
+                         'mass_%s_%s_warm2.pkl' % (type, pts.shape[0]))
+    try:
+        if os.path.exists(cache) and os.path.getmtime(cache) >= os.path.getmtime(npz_path):
+            with open(cache, 'rb') as fh:
+                obj = pickle.load(fh)
+            return obj
+    except Exception:
+        pass                                    # stale / incompatible cache
+
+    interp = LinearNDInterpolator(pts, vals, rescale=True)
+    # Warm up: scipy defers building qhull's search structure to the first
+    # query, which costs seconds for the MS grid. Querying once here means the
+    # pickled object comes back ready to use (~0 ms per query) instead of
+    # paying that cost in every fitting worker.
+    try:
+        interp(np.asarray(pts[:1], dtype=float))
+    except Exception:
+        pass
+    try:
+        tmp = '%s.tmp%d' % (cache, os.getpid())
+        with open(tmp, 'wb') as fh:
+            pickle.dump(interp, fh, protocol=pickle.HIGHEST_PROTOCOL)
+        os.replace(tmp, cache)                  # atomic: safe with concurrent workers
+    except Exception:
+        pass
+    return interp
+
+
 def logteff_logg_to_mass(type='DA'):
+
     """Calculate stellar mass for given logTeff and logg using precomputed models from Sihao Cheng 2021.
 
     Args:
         type (str, optional): Spectral type of stellar model. 'DA' for DA, 'DB' for DB, MS for MS.
 
     Returns:
-        _type_: function
+        callable: ``f(logteff, logg)`` for DA/DB, ``f(logteff, logg, feh=0.0)`` for
+        MS (whose tracks are three-dimensional). The compact ``.npz`` tables hold
+        the interpolation nodes only, so the triangulation is rebuilt on load
+        (a few hundred ms) instead of being unpickled from a 244 MB file.
     """
-    with open(dir_path+'/models/logteff_logg_to_mass_'+type+'.pkl', 'rb') as file:
+    npz_path = dir_path+'/models/logteff_logg_to_mass_'+type+'.npz'
+    pkl_path = dir_path+'/models/logteff_logg_to_mass_'+type+'.pkl'
+
+    # in-process memo: repeated calls (fits, MCMC) must not reload anything
+    cached = _MASS_CACHE.get((npz_path, os.path.getmtime(npz_path) if os.path.exists(npz_path) else 0))
+    if cached is not None:
+        return cached
+
+    if os.path.exists(npz_path):
+        interp = _load_mass_interp(npz_path, type)
+        _MASS_CACHE[(npz_path, os.path.getmtime(npz_path))] = (
+            _MassLookup3D(interp) if _is_3d(npz_path) else interp)
+        return _MASS_CACHE[(npz_path, os.path.getmtime(npz_path))]
+    if not os.path.exists(pkl_path):
+        raise FileNotFoundError(
+            "no mass table for specclass '%s' (looked for %s and %s)"
+            % (type, npz_path, pkl_path))
+    with open(pkl_path, 'rb') as file:
         logteff_logg_to_mass = pickle.load(file)
     return logteff_logg_to_mass
 def find_nearest(array, value):
     array = np.asarray(array)
     idx = (np.abs(array - value)).argmin()
     return idx
+
+
+def load_legacy_weights(model, path):
+    """Load a Keras .h5 weight file directly with h5py.
+
+    Keras >= 2.11 cannot faithfully read the weight layout written by Keras
+    2.4 (groups named ``layer/dense/kernel:0``); it loads positionally and
+    silently produces garbage predictions. Reading the arrays ourselves and
+    calling ``set_weights`` is version independent and reproduces the trained
+    model to machine precision.
+
+    Parameters
+    ----------
+    model : keras.Model
+            Model with the same architecture the weights were trained with.
+    path : str
+            Path to the .h5 file.
+    """
+    with h5py.File(path, 'r') as f:
+        names = [n.decode() if isinstance(n, bytes) else n
+                 for n in f.attrs.get('layer_names', [])]
+        arrays = []
+        for name in names:
+            if name not in f:
+                continue
+            grp = f[name]
+            if isinstance(grp, h5py.Dataset):
+                arrays.append(np.array(grp))
+                continue
+            found = {}
+
+            def _collect(g):
+                for k in g.keys():
+                    v = g[k]
+                    if isinstance(v, h5py.Dataset):
+                        found[k] = np.array(v)
+                    elif isinstance(v, h5py.Group):
+                        _collect(v)
+
+            _collect(grp)
+            if 'kernel:0' in found and 'bias:0' in found:
+                arrays += [found['kernel:0'], found['bias:0']]
+    if not arrays:
+        raise ValueError('no weights found in %s (expected the legacy '
+                         'layer/kernel:0 layout)' % path)
+    model.set_weights(arrays)
+    return model
+
 
 class GFP:
 
@@ -135,8 +317,13 @@ class GFP:
         self.Tgrid = {}
         self.ggrid = {}
         if allmodel:
-            for types in ['DA','DB','MS','sd']:
-                self.model_region(types, resolution)
+            for types in ['DA', 'DB', 'MS', 'sd']:
+                try:
+                    self.model_region(types, resolution)
+                except FileNotFoundError as exc:
+                    # e.g. the optional subdwarf grid is not distributed
+                    warnings.warn("skipping model '%s': %s" % (types, exc),
+                                  RuntimeWarning)
         else:
             self.mark_specclass(specclass)
             for types in self.specclass:
@@ -149,11 +336,14 @@ class GFP:
             dir_path + '/models/neural_gen/MSspec_sc.txt')
         self.spec_scaled['DB'] = np.loadtxt(
             dir_path + '/models/neural_gen/DBspec_sc.txt')
-        self.spec_scaled['sd'] = np.loadtxt(
-            dir_path + '/models/neural_gen/sdobspec_sc.txt')
+        # subdwarf grid is not shipped in this release (incomplete training data)
+        _sd_sc = dir_path + '/models/neural_gen/sdobspec_sc.txt'
+        if os.path.exists(_sd_sc):
+            self.spec_scaled['sd'] = np.loadtxt(_sd_sc)
         self.exclude_wl_default = np.array(
             [3790, 3810, 3819, 3855, 3863, 3920, 3930, 4020, 4040, 4180, 4215, 4490, 4662.68, 5062.68, 6314.61, 6814.61])
         self.exclude_wl = self.exclude_wl_default
+        self._validate_scaling()
         self.norm_kw = {"plot": False}
         self.cont_fixed = False
         self.rv_fixed = False
@@ -166,6 +356,7 @@ class GFP:
         self.lineprofile_plot = None
         self.sp = SpecTools()
         self.onlyprofile = False
+        self.parallax = None      # distance in cm; set it (or onlyprofile=True) before sampling
     def mark_specclass(self,specclass):
         classes = specclass.split('+')
         self.specclass = [*classes]
@@ -194,8 +385,8 @@ class GFP:
                 dir_path + '/models/neural_gen/DA_wl.npy')
             self.model[types] = self.generator(
                 self.H_MS, len(self.lamgrid[types]))
-            self.model[types].load_weights(
-                dir_path + '/models/neural_gen/DA_p01.h5')
+            load_legacy_weights(self.model[types],
+                                dir_path + '/models/neural_gen/DA_p01.h5')
             self.model[types] =  tf.function(lambda x: self.model[types](x)).get_concrete_function(tf.TensorSpec(self.model[types].inputs[0].shape,self.model[types].inputs[0].dtype))
             pix_per_a = len(self.lamgrid[types]) / \
                 (self.lamgrid[types][-1] - self.lamgrid[types][0])
@@ -209,8 +400,8 @@ class GFP:
                 dir_path + '/models/neural_gen/MS_wl.npy')
             self.model[types] = self.MS_generator(
                 self.H_MS, len(self.lamgrid[types]))
-            self.model[types].load_weights(
-                dir_path + '/models/neural_gen/MS_p01.h5')
+            load_legacy_weights(self.model[types],
+                                dir_path + '/models/neural_gen/MS_p01.h5')
             self.model[types] = tf.function(lambda x: self.model[types](x)).get_concrete_function(tf.TensorSpec(self.model[types].inputs[0].shape,self.model[types].inputs[0].dtype))
             pix_per_a = len(self.lamgrid[types]) / \
                 (self.lamgrid[types][-1] - self.lamgrid[types][0])
@@ -223,22 +414,28 @@ class GFP:
                 dir_path + '/models/neural_gen/DB_wl.npy')
             self.model[types] = self.generator(
                 self.H_MS, len(self.lamgrid[types]))
-            self.model[types].load_weights(
-                dir_path + '/models/neural_gen/DB_p01.h5')
+            load_legacy_weights(self.model[types],
+                                dir_path + '/models/neural_gen/DB_p01.h5')
             self.model[types] =  tf.function(lambda x: self.model[types](x)).get_concrete_function(tf.TensorSpec(self.model[types].inputs[0].shape,self.model[types].inputs[0].dtype))
             pix_per_a = len(self.lamgrid[types]) / \
                 (self.lamgrid[types][-1] - self.lamgrid[types][0])
             self.resolution[types] = resolution * pix_per_a
         elif types == "sd":
-            self.Tgrid[types] = [30000, 70000]
+            _sd_h5 = dir_path + '/models/neural_gen/sdob_p01.h5'
+            if not os.path.exists(_sd_h5):
+                raise FileNotFoundError(
+                    "the subdwarf ('sd') model files are not part of this distribution "
+                    "(sdob_p01.h5 / sdob_wl.npy / sdobspec_sc.txt are not shipped). "
+                    "Use 'DA', 'DB' or 'MS', or obtain the sdob_* files separately.")
+            self.Tgrid[types] = [30000, 70000]  # kept for reference
             self.ggrid[types] = [4.5, 7.0]
             self.H_MS = 256
             self.lamgrid[types] = np.load(
                 dir_path + '/models/neural_gen/sdob_wl.npy')
             self.model[types] = self.generator(
                 self.H_MS, len(self.lamgrid[types]))
-            self.model[types].load_weights(
-                dir_path + '/models/neural_gen/sdob_p01.h5')
+            load_legacy_weights(self.model[types],
+                                dir_path + '/models/neural_gen/sdob_p01.h5')
             self.model[types] =  tf.function(lambda x: self.model[types](x)).get_concrete_function(tf.TensorSpec(self.model[types].inputs[0].shape,self.model[types].inputs[0].dtype))
 
             pix_per_a = len(self.lamgrid[types]) / \
@@ -305,6 +502,55 @@ class GFP:
             return np.vstack((teffs, loggs, meta)).T
         return np.vstack((teffs, loggs)).T
 
+    def _validate_scaling(self):
+        """Fail early with a readable message when a scaling table is corrupt.
+
+        Some released copies carry truncated ``*spec_sc.txt`` files (they were
+        distributed through Git LFS at one point). Without this check the
+        failure shows up much later as a cryptic unpack error.
+        """
+        for sc in getattr(self, 'specclass', []):
+            if sc not in self.spec_scaled or sc not in self.lamgrid:
+                continue
+            arr = np.asarray(self.spec_scaled[sc])
+            n_pix = len(self.lamgrid[sc])
+            if arr.shape != (2, n_pix):
+                raise RuntimeError(
+                    "scaling table for specclass '%s' has shape %s but the model grid "
+                    "has %d pixels (expected (2, %d)). The bundled "
+                    "'models/neural_gen/*spec_sc.txt' (or the .npy grid) is truncated; "
+                    "re-obtain it, or instantiate GFP with a specclass whose data is "
+                    "intact." % (sc, arr.shape, n_pix, n_pix))
+
+    def _check_validity(self, teff, logg, specclass, wl=None):
+        """Warn when parameters or wavelengths leave the validated domain.
+
+        Known limitation: the surrogate is trained on per-pixel min-max
+        normalised flux over a 5000-80000 K grid. Near the cool edge the
+        normalised target collapses towards zero, so the recovered absolute
+        flux degrades (1-2% in the optical, 10^2-10^3 % blueward of ~3500 A).
+        Validated for cool models: Teff >~ 6000 K and lambda >~ 4300 A.
+        """
+        if specclass not in ('DA', 'DB'):
+            return
+        t_lo, t_hi = self.Tgrid[specclass]
+        g_lo, g_hi = self.ggrid[specclass]
+        if teff < t_lo + 0.02 * (t_hi - t_lo):
+            warnings.warn(
+                "%s: Teff=%.0f K is within 2%% of the grid edge (%.0f K); "
+                "flux errors rise and the blue end is unreliable."
+                % (specclass, teff, t_lo), RuntimeWarning, stacklevel=2)
+        if not (g_lo <= logg <= g_hi):
+            warnings.warn(
+                "%s: logg=%.2f is outside the training grid [%.1f, %.1f]."
+                % (specclass, logg, g_lo, g_hi), RuntimeWarning, stacklevel=2)
+        if wl is not None and teff < 8000 and np.min(wl) < 4000:
+            warnings.warn(
+                "%s: lambda_min=%.0f A with Teff=%.0f K is outside the "
+                "validated range; the surrogate is not reliable blueward of "
+                "~4000 A for cool models (use the raw Koester grid)."
+                % (specclass, np.min(wl), teff), RuntimeWarning, stacklevel=2)
+
     def spec_sc(self, spec):
         spec_min, spec_max = self.spec_scaled[self.specclass]
         return (spec - spec_min) / (spec_max - spec_min)
@@ -333,16 +579,16 @@ class GFP:
         return model
     def generator(self, H, n_pix):
         x = Input(shape=(2,))
-        y = Dense(H, activation='relu')(x)
-        y = Dense(H, activation='relu')(y)
-        y = Dense(H, activation='relu')(y)
+        y = Dense(H, activation=LeakyReLU(alpha=0.01))(x)
+        y = Dense(H, activation=LeakyReLU(alpha=0.01))(y)
+        y = Dense(H, activation=LeakyReLU(alpha=0.01))(y)
         out = Dense(n_pix, activation='linear')(y)
 
         model = Model(inputs=x, outputs=out)
         model.compile(optimizer=Adamax(learning_rate=1e-3), loss='mse',
                       metrics=['mae'])
         model.trainable = False
-        # tf.function 封装
+        # tf.function wrapper
         #run_model = tf.function(lambda x: model(x))
         #func = run_model.get_concrete_function(tf.TensorSpec(model.inputs[0].shape,model.inputs[0].dtype))
 
@@ -373,9 +619,12 @@ class GFP:
         prms = prmsprv[:-1]
         rv = prmsprv[-1]
         # radius = prmsprv[-2]
-        spec_min, spec_max = self.spec_scaled[specclass]
         if specclass is None:
             specclass = self.specclass
+        if isinstance(specclass, (list, tuple)):
+            specclass = specclass[0]
+        self._check_validity(float(prms[0]), float(prms[1]), specclass, wl)
+        spec_min, spec_max = self.spec_scaled[specclass]
         if specclass =='MS':
             prms=np.append(prms,0)
         label = self.label_sc(np.array(prms.reshape(1, -1)), specclass)
@@ -396,6 +645,16 @@ class GFP:
             # erg/cm^2/s/cm -> 1e-17 erg/cm^2/s/A
         else:
             print('not single specclass inputed!')
+        synth = np.asarray(synth, dtype='float64')
+        _neg = synth < 0
+        if np.any(_neg):
+            warnings.warn(
+                "%s: %d/%d pixels came out negative from the network and were "
+                "clipped to 0 (network noise, not a physical absorption)."
+                % (specclass, int(_neg.sum()), synth.size),
+                RuntimeWarning, stacklevel=2)
+            synth = synth.copy()
+            synth[_neg] = 0.0
         #K.clear_session()
         #tf.compat.v1.reset_default_graph()
         return synth.copy()
@@ -428,6 +687,11 @@ class GFP:
             parallax = self.parallax
         if self.onlyprofile:
             parallax = 1.0
+        elif parallax is None:
+            raise ValueError(
+                "GFP.parallax is not set. Provide the distance in cm "
+                "(e.g. gfp.parallax = (4520*u.pc).to(u.cm).value) or set "
+                "gfp.onlyprofile = True to get a shape-only spectrum.")
         # print('specclass',specclass)
         if type(specclass) != list:
             specclass = [specclass]
@@ -551,7 +815,7 @@ class GFP:
             else:
                 res.extend([mass1])
         return res
-    def fit_spectrum(self, wl, fl, filters, gri, TG2M, ivar=None, parallax=0, mcmc=False, onlyprofile=False, polyorder=0,
+    def fit_spectrum(self, wl, fl, filters, gri, TG2M, ivar=None, parallax=0, mcmc=False, onlyprofile=False,linewidth=100, polyorder=0,
                      norm_kw=dict(k=1, sfac=0.5, niter=0),
                      nwalkers=25, burn=25, ndraws=25, sampler_kw=dict(threads=1,moves=None), progress=True,
                      plot_init=False, make_plot=True, plot_corner=False, plot_corner_full=False, plot_trace=False,  savename=None, given_plot=None,crop=None, init_rv=None,
@@ -700,7 +964,7 @@ class GFP:
             lst = atom_line(wl0.min(), wl0.max()).special_lines[i]
             lst = lst[np.logical_and(lst > wl0.min(), lst < wl0.max())]
             centroid.extend(lst)
-        addition_lines = np.vstack((centroid, np.ones(len(centroid))*50)).T
+        addition_lines = np.vstack((centroid, np.ones(len(centroid))*linewidth)).T
         if make_plot:
             if given_plot is None:
                 if onlyprofile:
@@ -737,7 +1001,7 @@ class GFP:
             else:
                 chisq = np.sum(resid)
             if np.isnan(chisq):
-                return -np.Inf
+                return -np.inf
             lnlike = -0.5 * chisq
             # print(chisq / (np.sum(self.mask) - len(prms)))
             # check planck
@@ -772,18 +1036,18 @@ class GFP:
                 paras = [np.array(prms)]
             for jj in range(nstarparams):
                 if prms[jj] < prior_lows[jj] or prms[jj] > prior_highs[jj]:
-                    return -np.Inf
+                    return -np.inf
             mass = self.decide_mass(TG2M,paras,self.specclass,err=False)
             for i in range(len(mass)):
                 if np.isnan(mass[i]):
                     #print('nan reported', mass1, mass2)
-                    return -np.Inf
+                    return -np.inf
             return 0
 
         def lnprob(prms):
             lp = lnprior(prms)
             if not np.isfinite(lp):
-                return -np.Inf
+                return -np.inf
             return lp + lnlike(prms)
 
 
@@ -999,7 +1263,7 @@ class GFP:
                     res[self.mask] += resid
                     res[self.cont_mask] += c_diff
                 else:
-                    res += resid*np.sqrt(ivar)
+                    res[self.mask] += resid
                 return res
                 
             star_rv = self.rv
@@ -1154,7 +1418,7 @@ class GFP:
             m_tmp = []
             r_tmp = []
             if self.isbinary:
-                massseries = self.decide_mass(TG2M,np.array([sampler.flatchain.T[self.para1mask],sampler.flatchain.T[self.para2mask]]),specclass=self.specclass,err=False)
+                massseries = self.decide_mass(TG2M,[sampler.flatchain.T[self.para1mask],sampler.flatchain.T[self.para2mask]],specclass=self.specclass,err=False)
                 radiusseries = np.sqrt(massseries[0]*MSUN*G/10**(np.array(sampler.flatchain.T[self.para1mask])[1]))/RSUN
                 radiusseries = np.vstack((radiusseries,np.sqrt(massseries[1]*MSUN*G/10**(np.array(sampler.flatchain.T[self.para2mask][1])))/RSUN))
                 for k in range(len(massseries)):
@@ -1281,7 +1545,7 @@ class GFP:
 
         if make_plot:
             print('make plot')
-            self.makeplot(wl,fl,fit_fl,ivar,'profile',savename,mle,[*addition_elements],parallax,given_plot=self.lineprofile_plot)
+            self.makeplot(wl,fl,fit_fl,ivar,'profile',savename,mle,[*addition_elements],parallax,given_plot=self.lineprofile_plot,width=linewidth)
             if not onlyprofile:
                 norm_ax = self.norm_plot[1]
                 norm_ax[1].plot(wl, fit_fl, c='r',
@@ -1326,7 +1590,7 @@ class GFP:
                 for i in range(len(mass)):
                     result_str += r'$R%d /R_{\odot}$: %.2f  ' % (i,radius[i])
                 norm_ax[2].text(0.1,0.1, result_str,transform = norm_ax[2].transAxes)
-                '''for i in range(len(para1name)):
+                r'''for i in range(len(para1name)):
                     norm_ax[0].text(left, bottom, para1name[i]+r'$= %.2f \pm %.2f$' %
                                     (mle[0][i], stds[0][i]), fontsize=10, ha='right', color='k')
                     left += step

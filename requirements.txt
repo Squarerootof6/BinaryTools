@@ -1,0 +1,30 @@
+# Runtime dependencies for binary_tools
+#
+# Validated environment (2026-10):
+#   Python 3.11.5 · NumPy 1.26.4 · TensorFlow 2.14.0 · Keras 2.14
+#
+# Why the pins:
+#   * tensorflow 2.14.x is the last release that loads the bundled legacy
+#     Keras-2.4 .h5 weight files through its own API.  binary_tools ships its
+#     own h5py-based loader (gfp.load_legacy_weights), so newer TF works too,
+#     but 2.14.x is the combination that has been verified end-to-end.
+#   * TensorFlow 2.14 requires NumPy < 2.0 (NumPy 2 removes np.float/np.Inf,
+#     which the codebase historically used; those were replaced, but the
+#     TF/numpy ABI mismatch alone breaks TF 2.14 on NumPy 2).
+#
+numpy>=1.23.5,<2.0
+tensorflow==2.14.0
+keras==2.14.0
+h5py>=3.8,<4
+scipy>=1.9
+astropy>=5.0
+matplotlib>=3.5
+pandas>=1.5
+lmfit>=1.2
+emcee>=3.0
+corner>=2.2
+
+# only needed by the photometric-calibration helpers (atom_lines.calibrates)
+pyphot>=1.5
+# only needed by the training code (binary_tools/neural.py, spec_gen.py)
+scikit-learn>=1.2

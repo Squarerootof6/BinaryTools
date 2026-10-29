@@ -1,6 +1,9 @@
 import scipy
 import numpy as np
-from distutils import filelist
+try:  # distutils was removed in Python 3.12
+    from distutils import filelist  # noqa: F401  (unused, kept for old code paths)
+except ImportError:  # pragma: no cover
+    filelist = None
 import emcee
 import pandas as pd
 from glob import glob
@@ -31,7 +34,8 @@ def doppler_shift(wl, fl, dv):
     new_fl = np.interp(new_wl, wl, fl)
     return new_fl
 def wav_to_dvel(wav):
-    """根据多普勒公式，把相邻两个波长的波长差转化为对应的速度差"""
+    """Convert the wavelength difference between adjacent pixels into a
+    velocity difference via the Doppler formula."""
     """Converts wavelengths to delta velocities using doppler formula"""
     dvel = (wav[1:] - wav[:-1]) / (wav[1:]) * SPEED_OF_LIGHT
     return dvel
@@ -59,7 +63,7 @@ def calibrates(cal_path, filelist, filters):
     filters: pyphot.filter. the filters of photometric magnitude
     return: output a figure and the calibrated (wl,flux), return calibration poly y
     """
-    # 打开定标光谱
+    # open the calibration spectrum
     rows = int((len(filelist)+0.5)/2)
     col = 2
     fig, ax = plt.subplots(rows, col, figsize=(
@@ -84,7 +88,7 @@ def calibrates(cal_path, filelist, filters):
         diff = []
         for band in range(len(filters)):
             # zero = 3.630*10**(-9) # erg s-1 cm-2 A-1
-            # 计算星等
+            # compute magnitudes
             f = filters[band].get_flux(wl, flux, axis=-1)
             mag_spec = -2.5 * np.log10(f.value) - filters[band].AB_zero_mag
             diff.append(gri[band]-mag_spec)
@@ -132,7 +136,7 @@ def calibrate(data, filters, magnitude):
 
     for band in range(len(filters)):
         # zero = 3.630*10**(-9) # erg s-1 cm-2 A-1
-        # 计算星等
+        # compute magnitudes
         f = filters[band].get_flux(wl, flux, axis=-1)
         mag_spec = -2.5 * np.log10(f.value) - filters[band].AB_zero_mag
         diff.append(gri[band]-mag_spec)
@@ -146,7 +150,7 @@ def calibrate(data, filters, magnitude):
 
 
 def peak_fit(wl, flux, ivar, center, edge=120, types=-1, resolution=3):
-    center = np.float(center)
+    center = float(center)
     mask = np.where(np.logical_and(wl > center-edge, wl < center+edge))
     wl = wl[mask]
     flux = flux[mask]

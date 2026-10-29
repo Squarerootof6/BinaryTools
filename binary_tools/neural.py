@@ -227,7 +227,7 @@ def main():
             label = []
             for item in table:
                 ii = item.split('(')[0].split('=')
-                value = np.float(re.findall('-*\d*.*\d', ii[-1])[0])
+                value = float(re.findall(r'-*\d*.*\d', ii[-1])[0])
                 label.append(value)
         f = pd.read_csv(model_dir+filelist[0],
                         skiprows=8, delimiter=' +', header=None, engine='python')

@@ -152,7 +152,7 @@ class LineProfiles:
 			plt.figure(figsize = (6,3), )
 			plt.plot(cropped_wl,1-continuum_normalized, 'k')
 			plt.plot(cropped_wl,1-voigtfitter.eval(result.params, x = cropped_wl),'r')
-			plt.xlabel('Wavelength ($\mathrm{\AA}$)')
+			plt.xlabel(r'Wavelength ($\mathrm{\AA}$)')
 			plt.ylabel('Normalized Flux')
 			if centroid == self.halpha:
 				plt.title(r'H$\alpha$')

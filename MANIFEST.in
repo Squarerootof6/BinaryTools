@@ -1,0 +1,17 @@
+include README.md
+include requirements.txt
+include check_install.py
+
+# model files only — weights, wavelength grids, scaling tables
+recursive-include binary_tools/models *.npz
+recursive-include binary_tools/models/neural_gen *.h5
+recursive-include binary_tools/models/neural_gen *.npy
+recursive-include binary_tools/models/neural_gen *.txt
+include binary_tools/atomic_lines.csv
+
+# never ship training data or build artefacts
+prune training_data
+prune build
+prune dist
+global-exclude *.py[cod]
+global-exclude __pycache__/*

@@ -1,9 +1,14 @@
 build/
+dist/
 __pycache__/
 *.pyc
 .env
 .DS_Store
 .vscode/
+.ipynb_checkpoints/
 binary_tools.egg-info/
 binary_tools/__pycache__/
 Examples*
+
+# training arrays / intermediate training artefacts (not part of the release)
+training_data/
